@@ -1,8 +1,10 @@
 import OpenAI from "openai";
 
+
+
 const openai = new OpenAI({
     apiKey: process.env.OPENAI_API_KEY,
-    
+
 });
 
 export async function POST(req: Request) {
@@ -10,6 +12,7 @@ export async function POST(req: Request) {
   try {
     const response = await openai.chat.completions.create({
       model: process.env.AI_MODEL || "gpt-5-nano",
+
       messages: [
         {
           role: "system",
@@ -22,6 +25,7 @@ export async function POST(req: Request) {
         },
       ],
     });
+
 
     return new Response(
       JSON.stringify({ response: response.choices[0].message.content }),

@@ -182,7 +182,7 @@ const ChatView = () => {
             onClick={onSubmit}
             disabled={!input.trim() || isLoading}
             size="icon"
-            className="absolute right-2 bottom-2 h-11 w-11 bg-blue-600 hover:bg-blue-700 text-white rounded-full shadow-md transition-all disabled:opacity-50 disabled:bg-slate-300"
+            className="absolute right-2 bottom-2 h-11 w-11 bg-blue-600 hover:bg-blue-700 text-white rounded-full shadow-md transition-all disabled:opacity-50 disabled:bg-slate-300 cursor-pointer"
           >
             {isLoading ? <Loader2 className="h-5 w-5 animate-spin" /> : <Send className="h-5 w-5 ml-0.5" />}
           </Button>
