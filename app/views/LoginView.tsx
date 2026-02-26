@@ -15,6 +15,9 @@ import { useRouter } from "next/navigation";
 import { useForm } from "react-hook-form";
 import z from "zod";
 import { Sparkles, ArrowRight, Bot, Cpu } from "lucide-react";
+import { useEffect } from "react";
+
+
 
 const formSchema = z.object({
   name: z.string().min(2, "Name must be at least 2 characters long"),
@@ -28,6 +31,16 @@ const formSchema = z.object({
 
 const LoginView = () => {
   const router = useRouter();
+  // useEffect(() => {
+  //   const email = sessionStorage.getItem("userEmail")
+
+  //   if (email?.endsWith("@sscinc.com")) {
+  //     router.replace("/chat");
+  //   }
+  
+  // }, [router])
+
+
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),

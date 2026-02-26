@@ -6,6 +6,8 @@ import { Textarea } from "@/components/ui/textarea";
 import { Button } from "@/components/ui/button";
 import toast from "react-hot-toast";
 import { Bot, User, Send, Sparkles, Loader2, ShieldCheck } from "lucide-react";
+import ReactMarkdown from "react-markdown";
+import remarkGfm from "remark-gfm";
 
 // Define the message structure for a continuous chat
 type Message = {
@@ -47,7 +49,13 @@ const ChatView = () => {
       const response = await fetch("/api/chat", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ message: userMsg.content }),
+        body: JSON.stringify({
+          message: userMsg.content,
+          history: messages.map(m => ({
+            role: m.role === "ai" ? "assistant" : "user",
+            content: m.content
+          }))
+        }),
       });
 
       if (!response.ok) throw new Error("Server response failed");
@@ -140,7 +148,9 @@ const ChatView = () => {
                       : "bg-white border border-slate-100 text-slate-800 rounded-tl-sm"
                   }`}
                 >
-                  {msg.content}
+            <ReactMarkdown remarkPlugins={[remarkGfm]}>
+  {msg.content}
+</ReactMarkdown>
                 </div>
               </div>
             </div>
