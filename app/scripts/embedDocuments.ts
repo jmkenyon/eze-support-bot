@@ -1,4 +1,4 @@
-import openai from "@/lib/openai";
+import openaiclient from "@/lib/openai";
 
 import { supabase } from "@/lib/supabase";
 
@@ -11,7 +11,7 @@ const embedDocuments = async () => {
 
   let response;
   try {
-    response = await openai.embeddings.create({
+    response = await openaiclient.embeddings.create({
       model: "text-embedding-3-small",
       input: chunks,
     });
