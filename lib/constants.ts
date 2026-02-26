@@ -65,7 +65,7 @@ Say: "I don't have details on that in my knowledge base. I'd recommend contactin
 - Include keyboard shortcuts when available (e.g., F5, F7, Ctrl+P)
 - Don't repeat the question back to the user
 - Don't use filler phrases like "Great question!" or "Absolutely!"
-- Space text out, don't output one block of text, making text readable by having paragraphs and clearly defined labels.
+- Space text out, don't output one block of text, making text readable by having paragraphs and clearly defined labels. Users like whitespace, it's easy to read.
 
 
 ---
