@@ -3,8 +3,31 @@ import openai from "@/lib/openai";
 import { supabase } from "@/lib/supabase";
 
 export async function POST(req: Request) {
-  const { message, history = [] } = await req.json();
   try {
+    const body = await req.json().catch(() => null);
+    if (!body || typeof body.message !== "string" || !body.message.trim()) {
+      return new Response(
+        JSON.stringify({ error: "Invalid request payload" }),
+        {
+          status: 400,
+        }
+      );
+    }
+
+    const message = body.message.trim();
+    const history = Array.isArray(body.history) ? body.history : [];
+
+    const trimmedHistory = history
+      .filter(
+        (m: unknown): m is { role: "user" | "assistant"; content: string } =>
+          !!m &&
+          typeof m === "object" &&
+          ((m as { role?: unknown }).role === "user" ||
+            (m as { role?: unknown }).role === "assistant") &&
+          typeof (m as { content?: unknown }).content === "string"
+      )
+      .slice(-8);
+
     const embeddingResponse = await openai.embeddings.create({
       model: "text-embedding-3-small",
       input: message,
@@ -12,11 +35,18 @@ export async function POST(req: Request) {
 
     const queryEmbedding = embeddingResponse.data[0].embedding;
 
-    const { data } = await supabase.rpc("match_documents", {
+    const { data, error } = await supabase.rpc("match_documents", {
       query_embedding: queryEmbedding,
       match_threshold: 0.5,
       match_count: 5,
     });
+
+      if (error) {
+        return new Response(
+          JSON.stringify({ error: "Failed to retrieve knowledge base context" }),
+          { status: 500 }
+        );
+      }
 
     const retrievedDocs =
       data?.map((item: { content: string }) => item.content).join("\n---\n") ??
@@ -29,8 +59,6 @@ export async function POST(req: Request) {
     
     ${retrievedDocs}
     `;
-
-    const trimmedHistory = history.slice(-8); // keep last 8 messages max
 
     const response = await openai.chat.completions.create({
       model: process.env.AI_MODEL || "gpt-5-nano",

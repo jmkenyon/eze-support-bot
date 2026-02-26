@@ -9,10 +9,16 @@ const embedDocuments = async () => {
     .map((chunk) => chunk.trim())
     .filter(Boolean);
 
-  const response = await openai.embeddings.create({
-    model: "text-embedding-3-small",
-    input: chunks,
-  });
+  let response;
+  try {
+    response = await openai.embeddings.create({
+      model: "text-embedding-3-small",
+      input: chunks,
+    });
+  } catch (err) {
+    console.error("Error generating embeddings:", err);
+    process.exit(1);
+  }
 
   const rows = chunks.map((chunk, index) => ({
     content: chunk,
@@ -21,11 +27,15 @@ const embedDocuments = async () => {
 
   const { error } = await supabase.from("documents").insert(rows);
 
-    if (error) {
-        console.error("Error inserting embeddings into Supabase:", error);
-    } else {
-        console.log("Embeddings successfully inserted into Supabase.");
-    }
+  if (error) {
+    console.error("Error inserting embeddings into Supabase:", error);
+    process.exit(1);
+  } else {
+    console.log("Embeddings successfully inserted into Supabase.");
+  }
 };
 
-embedDocuments();
+embedDocuments().catch((err) => {
+  console.error("Unexpected error:", err);
+  process.exit(1);
+});
