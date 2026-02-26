@@ -36,9 +36,10 @@ const ChatView = () => {
 
   const onSubmit = async () => {
     if (!input.trim()) return;
-
-    await sendMessage({ text: input });
-    setInput("");
+  
+    const messageToSend = input;
+    setInput("");              // ✅ clear instantly
+    await sendMessage({ text: messageToSend });
   };
 
   const handleKeyDown = (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
