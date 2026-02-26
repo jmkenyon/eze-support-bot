@@ -7,7 +7,7 @@ import { openai } from "@ai-sdk/openai";
 export async function POST(req: Request) {
   try {
     const { messages }: { messages: UIMessage[] } = await req.json();
-    if (!messages) {
+    if (!messages || messages.length === 0) {
       return new Response(JSON.stringify({ error: "No messages provided" }), {
         status: 400,
       });
@@ -19,8 +19,12 @@ export async function POST(req: Request) {
         ?.filter((p) => p.type === "text")
         ?.map((p) => p.text)
         ?.join(" ") ?? "";
-      
 
+    if (!message.trim()) {
+      return new Response(JSON.stringify({ error: "Empty message content" }), {
+        status: 400,
+      });
+    }
 
     const embeddingResponse = await openaiclient.embeddings.create({
       model: "text-embedding-3-small",
