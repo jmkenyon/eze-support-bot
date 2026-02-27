@@ -1,7 +1,6 @@
 "use client";
 
 import { useEffect, useState, useRef } from "react";
-import { useRouter } from "next/navigation";
 import { Textarea } from "@/components/ui/textarea";
 import { Button } from "@/components/ui/button";
 import { Bot, User, Send, Sparkles, Loader2, ShieldCheck } from "lucide-react";
@@ -17,17 +16,11 @@ const ChatView = () => {
   const [input, setInput] = useState("");
 
   const isLoading = status === "submitted" || status === "streaming";
-  const router = useRouter();
+
   const messagesEndRef = useRef<HTMLDivElement>(null);
 
   // Authentication Check
-  useEffect(() => {
-    const email = sessionStorage.getItem("userEmail");
 
-    if (!email || !email.endsWith("@sscinc.com")) {
-      router.replace("/");
-    }
-  }, [router]);
 
   // Auto-scroll to the bottom when new messages arrive
   useEffect(() => {
@@ -38,7 +31,7 @@ const ChatView = () => {
     if (!input.trim()) return;
   
     const messageToSend = input;
-    setInput("");              // ✅ clear instantly
+    setInput("");           
     await sendMessage({ text: messageToSend });
   };
 
